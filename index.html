@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Assistant</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
+        #user-input { width: 100%; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Chat Assistant</h1>
+    <div id="chat"></div>
+    <input type="text" id="user-input" placeholder="Type your message..." />
+    <script>
+        const chatDiv = document.getElementById('chat');
+        const userInput = document.getElementById('user-input');
+
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const message = userInput.value;
+                chatDiv.innerHTML += `<div>User: ${message}</div>`;
+                userInput.value = '';
+                sendMessage(message);
+            }
+        });
+
+        async function sendMessage(message) {
+            const response = await fetch('http://localhost:8000/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+            const data = await response.json();
+            chatDiv.innerHTML += `<div>Assistant: ${data.response}</div>`;
+            chatDiv.scrollTop = chatDiv.scrollHeight; // Scroll to the bottom
+        }
+    </script>
+</body>
+</html>
